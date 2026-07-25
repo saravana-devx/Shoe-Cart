@@ -1,56 +1,83 @@
-# Welcome to your Expo app 👋
+# 👟 Shoe Mart (shoecart)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A cross-platform (iOS, Android, Web) shoe-store app built with **Expo** and **React Native**. It has two roles — **Admin** and **User** — selected on the home screen. Admins manage the catalog and view orders; users browse shoes, add them to a cart, and place orders.
 
-## Get started
+## Features
 
-1. Install dependencies
+- **Role selection** — choose Admin or User on launch.
+- **Admin**
+  - Browse the shoe catalog
+  - Add a new shoe (brand, model, price, sizes, image)
+  - View placed orders
+- **User**
+  - Browse the shoe catalog
+  - Add shoes to the cart
+  - Place orders and view order history
+- Global state managed with **Redux Toolkit** (catalog, cart, orders).
+
+## Tech stack
+
+| Area | Library |
+| --- | --- |
+| Framework | [Expo](https://docs.expo.dev/versions/v57.0.0/) `~57` / React Native `0.86` / React `19` |
+| Navigation | [Expo Router](https://docs.expo.dev/router/introduction) (file-based, typed routes) |
+| State | [Redux Toolkit](https://redux-toolkit.js.org/) + React Redux |
+| Icons | `@expo/vector-icons`, `lucide-react-native` |
+| Images | `expo-image`, `expo-image-picker` |
+| Language | TypeScript |
+
+## Getting started
+
+1. Install dependencies:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. Start the dev server:
 
    ```bash
-   npx expo start
+   npm start
    ```
 
-In the output, you'll find options to open the app in a
+   Then press `a` (Android), `i` (iOS), or `w` (web) — or scan the QR code with [Expo Go](https://expo.dev/go).
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### Other scripts
 
 ```bash
-npm run reset-project
+npm run android   # build & run on an Android device/emulator
+npm run ios       # build & run on an iOS simulator
+npm run web       # run in the browser
+npm run lint      # lint the project
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Project structure
 
-### Other setup steps
+```
+src/
+├── app/                     # Expo Router routes (file-based)
+│   ├── _layout.tsx          # Root layout — wraps app in the Redux Provider
+│   ├── index.tsx            # Home — role selection
+│   ├── admin/               # Admin screens (catalog, add shoe, orders)
+│   └── user/                # User screens (catalog, cart, orders)
+├── components/              # Shared UI (RoleSelection, Header)
+├── constants/               # Static data & colors (dummyData, colors)
+├── redux/
+│   ├── store.ts             # Store — shoes, cart, order reducers
+│   └── Slice/               # AddtoCartSlice, ShoesSlice, ordersSlice
+└── types/                   # Shared TypeScript types (shoes)
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## State management
 
-## Learn more
+The Redux store ([src/redux/store.ts](src/redux/store.ts)) combines three slices:
 
-To learn more about developing your project with Expo, look at the following resources:
+- **`shoes`** — the catalog; seeded from [src/constants/dummyData.ts](src/constants/dummyData.ts). Actions: `add_Shoes`, `update_Shoes`.
+- **`cart`** — items the user has added. Actions: `addToCart`, `emptyCart`.
+- **`order`** — placed orders. Action: `updateOrder`.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+> Note: state is in-memory only — it resets when the app reloads. Add a persistence layer (e.g. `redux-persist`) if you need it to survive restarts.
 
-## Join the community
+## License
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Built as an assignment project and shared publicly for review. Feel free to explore the code.
