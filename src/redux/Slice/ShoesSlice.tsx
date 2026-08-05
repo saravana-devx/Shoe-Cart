@@ -14,6 +14,7 @@ const shoesSlice = createSlice({
         },
         update_Shoes: (state, action) => {
             state.data = action.payload
+
         },
 
 

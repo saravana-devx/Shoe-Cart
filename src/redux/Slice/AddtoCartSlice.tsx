@@ -10,19 +10,24 @@ const CartReducer = createSlice({
     reducers: {
         addToCart: (state, action) => {
             const item = action.payload;
+
+
             const exisitng = state.data.find((shoes_Item: any) => {
 
                 return shoes_Item?.id == item.id
             })
 
             if (exisitng) {
-                exisitng.quantity += 1;
+
+                item.type == "add" ? exisitng.quantity += 1 : exisitng.quantity -= 1
             }
-            else {
+            else if (!exisitng) {
                 state.data.push({ ...action.payload, quantity: 1 })
 
             }
-
+            state.data = state.data.filter(
+                (item: any) => item.quantity > 0
+            );
 
 
 

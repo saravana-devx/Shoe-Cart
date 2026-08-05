@@ -3,28 +3,37 @@ import { addToCart } from "@/redux/Slice/AddtoCartSlice";
 import { update_Shoes } from "@/redux/Slice/ShoesSlice";
 import { RootState } from "@/redux/store";
 import { Minus, Plus } from "lucide-react-native";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
     FlatList,
     Image,
+    ScrollView,
     StyleSheet,
     Text,
+    TextInput,
     TouchableOpacity,
     View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 
+const sortArray = [
+    { id: 1, name: "ascending" },
+    { id: 2, name: "Descending" },
+    { id: 3, name: "Nike" },
+    { id: 4, name: "Adidas" },
+    { id: 5, name: "Converse" },
 
+]
 export default function UserHome() {
-    const [selectedCategory, setSelectedCategory] = useState("All");
     const shoes = useSelector((state: RootState) => state.shoes.data);
-    const cart = useSelector((state: RootState) => state.cart.data);
-    const [selectedSizes, setSelectedSizes] = useState<{
-        [key: string]: number;
-    }>({}); const dispatch = useDispatch()
-
+    const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: number; }>({});
+    const dispatch = useDispatch()
+    const [filtered_Shoes, setFiltered_Shoes] = useState(shoes);
+    const [search, setsearch] = useState("");
+    const [filter, setFilter] = useState<Number>();
     const updateCart = (item: any, key: string, id: any) => {
+
         const data = shoes.map((data: any) => {
             if (data.id == item.id)
                 if (key == "add") {
@@ -33,6 +42,7 @@ export default function UserHome() {
                         ...data, quantity: data.quantity + 1, selectedSize: selectedSizes[data.id],
                     }
                 } else {
+
                     return {
                         ...data, quantity:
                             data.quantity > 0
@@ -42,37 +52,95 @@ export default function UserHome() {
                 }
             return data
         })
-
+        setFiltered_Shoes(data)
         dispatch(update_Shoes(data))
-        dispatch(addToCart({ ...item, selected_Sizes: selectedSizes[id] }))
+        dispatch(addToCart({ ...item, selected_Sizes: selectedSizes[id], type: key }))
 
 
     }
+
+    const SearchList = useCallback((searchValue: any) => {
+        if (searchValue.trim() == "") {
+            setFiltered_Shoes(shoes)
+        }
+        const data = shoes.filter((item) =>
+            item.brand.toLowerCase().includes(searchValue.toLowerCase()) ||
+            item.model.toLowerCase().includes(searchValue.toLowerCase())
+
+        )
+        setFiltered_Shoes(data)
+    }, [])
+
+    const sortData = useCallback((item: any) => {
+        const id = item.id
+        if (id == 1 || id == 2) {
+
+            const data = [...shoes].sort((a, b) => {
+
+                return id !== 1 ? a.price - b.price : b.price - a.price
+            }
+            )
+            setFiltered_Shoes(data)
+        }
+        else {
+            const data = shoes.filter((newitem) =>
+                newitem.brand.toLowerCase().includes(item.name.toLowerCase()) || newitem.model.toLowerCase().includes(item.name.toLowerCase())
+            )
+            console.warn(data)
+            setFiltered_Shoes(data)
+        }
+    }, [filter])
+
     const getSizes = (shoeId: string, selectedSize: number) => {
+        console.log({ [shoeId]: selectedSize })
         setSelectedSizes(prev => ({
             ...prev,
             [shoeId]: selectedSize,
         }));
     };
-    const filteredShoes =
-        selectedCategory === "All"
-            ? shoes
-            : shoes.filter(
-                shoe =>
-                    shoe.brand.toLowerCase() === selectedCategory.toLowerCase()
-            );
+
 
     return (
         <SafeAreaView style={styles.container}>
 
             <Header title="User" />
 
+            <View style={{ padding: 10, borderRadius: 10, backgroundColor: "lightgrey", marginTop: 12 }}>
+                <TextInput
+                    placeholderTextColor={"grey"}
+                    value={search}
+                    placeholder="Search Shoe"
+                    onChangeText={(value) => {
+                        setsearch(value)
+                        SearchList(search)
 
+                    }}
+
+                />
+            </View>
+
+            <View style={{ flexDirection: "row", alignItems: "center", marginTop: 12 }}>
+                <ScrollView horizontal contentContainerStyle={{ gap: 10 }} showsHorizontalScrollIndicator={false}
+                >
+                    {sortArray.map((item, index) => (
+
+
+                        <TouchableOpacity onPress={() => {
+                            sortData(item)
+                            setFilter(index)
+                        }}
+                            style={{ backgroundColor: filter === index ? "#2563EB" : "white", padding: 10, borderRadius: 10, borderColor: .4, }}>
+                            <Text style={{ color: filter === index ? "white" : "#2563EB" }}>{item.name}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+
+            </View>
 
             <Text style={styles.sectionTitle}>Featured Shoes</Text>
 
             <FlatList
-                data={filteredShoes}
+                data={filtered_Shoes}
                 keyExtractor={item => item.id}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 30 }}
@@ -172,7 +240,7 @@ export default function UserHome() {
                                     <Plus size={20} color="#fff" />
                                 </TouchableOpacity>
                             </View>
-                        ) : (<TouchableOpacity onPress={() => { updateCart(item, "add", item.id) }} style={styles.cartButton}>
+                        ) : (<TouchableOpacity onPress={() => { selectedSizes[item.id] && updateCart(item, "add", item.id) }} style={styles.cartButton}>
                             <Text style={styles.cartText}>Add to Cart</Text>
                         </TouchableOpacity>)}
 
@@ -232,6 +300,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "700",
         marginBottom: 12,
+        marginTop: 12
     },
 
     categoryButton: {

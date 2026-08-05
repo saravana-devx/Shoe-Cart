@@ -51,66 +51,72 @@ export default function Cart() {
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ paddingBottom: 20 }}
             renderItem={({ item }) => (
-              <View style={styles.card}>
-                <Image
-                  source={
-                    typeof item.image === "string"
-                      ? { uri: item.image }
-                      : item.image
-                  }
-                  style={styles.image}
-                />
+              <>
+                {item.quantity !== 0 && (<View style={styles.card}>
+                  <Image
+                    source={
+                      typeof item.image === "string"
+                        ? { uri: item.image }
+                        : item.image
+                    }
+                    style={styles.image}
+                  />
 
-                <View style={styles.info}>
-                  <Text style={styles.name}>
-                    {item.brand} {item.model}
-                  </Text>
+                  <View style={styles.info}>
+                    <Text style={styles.name}>
+                      {item.brand} {item.model}
+                    </Text>
 
-                  <Text style={styles.price}>
-                    ₹{item.price.toLocaleString()}
-                  </Text>
+                    <Text style={styles.price}>
+                      ₹{item.price.toLocaleString()}
+                    </Text>
 
-                  <Text style={styles.quantity}>
-                    Quantity: {item.quantity}
-                  </Text>
-                  <Text style={styles.quantity}>
-                    size: {item.selected_Sizes}
-                  </Text>
+                    <Text style={styles.quantity}>
+                      Quantity: {item.quantity}
+                    </Text>
+                    <Text style={styles.quantity}>
+                      size: {item.selected_Sizes}
+                    </Text>
 
-                </View>
+                  </View>
 
-              </View>
+                </View>)}
+              </>
+
             )}
           />
-          <View style={{ borderWidth: .3 }} />
-          <View style={{ flexDirection: "row", padding: 10, justifyContent: "space-between" }}>
-            <View>
-
-              <Text style={{ fontSize: 18 }}>
-                Total:
-              </Text>
-            </View>
-            <View>
-              <Text style={{ fontSize: 18 }}>
-                {`-/ ${totalAmount}`}
-              </Text>
-            </View>
-          </View>
           <View>
-            <TouchableOpacity
-              onPress={AddOrder}
-              style={{
-                backgroundColor: "#2563EB",
-                paddingVertical: 14,
-                borderRadius: 12,
-                alignItems: "center",
-              }}>
-              <Text style={{
-                color: "#fff",
-                fontWeight: "700",
-                fontSize: 16,
-              }}>Place Order</Text>
-            </TouchableOpacity>
+
+            <View style={{ borderWidth: .3 }} />
+            <View style={{ flexDirection: "row", padding: 10, justifyContent: "space-between" }}>
+              <View>
+
+                <Text style={{ fontSize: 18 }}>
+                  Total:
+                </Text>
+              </View>
+              <View>
+                <Text style={{ fontSize: 18 }}>
+                  {`-/ ${totalAmount}`}
+                </Text>
+              </View>
+            </View>
+            <View>
+              <TouchableOpacity
+                onPress={AddOrder}
+                style={{
+                  backgroundColor: "#2563EB",
+                  paddingVertical: 14,
+                  borderRadius: 12,
+                  alignItems: "center",
+                }}>
+                <Text style={{
+                  color: "#fff",
+                  fontWeight: "700",
+                  fontSize: 16,
+                }}>Place Order</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       )}

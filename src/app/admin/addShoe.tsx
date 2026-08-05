@@ -68,7 +68,8 @@ export default function AddShoe({ setVisible, visible, selectedShoe, setSelected
       image: image,
       model: model,
       price: price,
-      sizes: sizes
+      sizes: sizes,
+      quantity: 0
     }
 
     dispatch(add_Shoes(data))
@@ -133,6 +134,7 @@ export default function AddShoe({ setVisible, visible, selectedShoe, setSelected
           <Text style={styles.label}>Price</Text>
 
           <TextInput
+          
             placeholder="8999"
             keyboardType="numeric"
             value={price}
