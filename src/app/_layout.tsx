@@ -1,14 +1,21 @@
 import { store } from "@/redux/store";
-import { Stack } from "expo-router";
+import { initTelemetry, setCurrentScreen } from "@/telemetry";
+import { TelemetryScreenTracker } from "@saravana.devx/telemetry/expo-router";
+import { Stack, usePathname } from "expo-router";
+import { useEffect } from "react";
+import { Platform } from "react-native";
 import { Provider } from "react-redux";
 
+initTelemetry();
+
 export default function RootLayout() {
+  const pathname = usePathname();
+  useEffect(() => setCurrentScreen(pathname), [pathname]);
+
   return (
     <Provider store={store}>
-
-    <Stack screenOptions={{ headerShown: false }} />
+      {Platform.OS !== "web" && <TelemetryScreenTracker />}
+      <Stack screenOptions={{ headerShown: false }} />
     </Provider>
-
-
   );
 }

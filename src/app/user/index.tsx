@@ -1,3 +1,4 @@
+import telemetry from "@/telemetry";
 import Header from "@/components/Header";
 import { addToCart } from "@/redux/Slice/AddtoCartSlice";
 import { update_Shoes } from "@/redux/Slice/ShoesSlice";
@@ -54,6 +55,7 @@ export default function UserHome() {
         })
         setFiltered_Shoes(data)
         dispatch(update_Shoes(data))
+        telemetry.track(key === "add" ? "add_to_cart" : "remove_from_cart", { shoe_id: item.id, brand: item.brand })
         dispatch(addToCart({ ...item, selected_Sizes: selectedSizes[id], type: key }))
 
 

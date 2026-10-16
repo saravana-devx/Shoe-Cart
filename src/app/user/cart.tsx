@@ -14,6 +14,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 
+import telemetry from "@/telemetry";
+
 export default function Cart() {
   const cart = useSelector((state: RootState) => state.cart.data);
   const shoes = useSelector((state: RootState) => state.shoes.data);
@@ -24,6 +26,7 @@ export default function Cart() {
       return { ...item, quantity: 0 }
     })
 
+    telemetry.track("order_placed", { items: cart.length, total: totalAmount })
     dispatch(updateOrder(cart))
     dispatch(emptyCart([]))
     dispatch(update_Shoes(resetCart))

@@ -1,4 +1,5 @@
 import { router } from "expo-router";
+import telemetry from "@/telemetry";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function RoleSelection() {
@@ -13,12 +14,16 @@ export default function RoleSelection() {
 
             <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={() => {
+                    telemetry.login(1)
+                    telemetry.track("role_selected", { role: "admin" })
                     router.push("/admin")
                 }} style={[styles.button, styles.adminButton]}>
                     <Text style={styles.buttonText}>Admin</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => {
+                    telemetry.login(2)
+                    telemetry.track("role_selected", { role: "user" })
                     router.push("/user")
                 }} style={[styles.button, styles.userButton]}>
                     <Text style={styles.buttonText}>User</Text>
